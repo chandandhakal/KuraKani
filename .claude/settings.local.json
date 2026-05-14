@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Recurse \"C:\\\\Users\\\\nirmal\\\\OneDrive\\\\Desktop\\\\New folder\\\\vibelink\" -Exclude \"node_modules\" | Where-Object { $_.FullName -notmatch \"node_modules|\\\\.git\" } | Select-Object FullName | Sort-Object FullName)"
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import pusherClient from '@/lib/pusher-client';
+import { getPusherClient } from '@/lib/pusher-client';
 
 const MOOD_META: Record<string, { emoji: string; label: string; color: string }> = {
   happy:    { emoji: '😊', label: 'Happy',    color: 'text-yellow-400' },
@@ -24,14 +24,14 @@ export default function Waiting({ userId, mood, onMatchFound, onCancel }: Props)
   const meta = MOOD_META[mood] ?? { emoji: '🌀', label: mood, color: 'text-white' };
 
   useEffect(() => {
-    const channel = pusherClient.subscribe(`vl-${userId}`);
+    const channel = getPusherClient().subscribe(`vl-${userId}`);
 
     channel.bind('match_found', ({ roomId }: { roomId: string }) => {
       onMatchFound(roomId);
     });
 
     return () => {
-      pusherClient.unsubscribe(`vl-${userId}`);
+      getPusherClient().unsubscribe(`vl-${userId}`);
     };
   }, [userId, onMatchFound]);
 

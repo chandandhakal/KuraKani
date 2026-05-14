@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import pusherClient from '@/lib/pusher-client';
+import { getPusherClient } from '@/lib/pusher-client';
 
 const MOOD_META: Record<string, { emoji: string; label: string; color: string }> = {
   happy:    { emoji: '😊', label: 'Happy',    color: 'text-yellow-400' },
@@ -42,7 +42,7 @@ export default function Chat({ userId, mood, onLeave }: Props) {
   }, [messages, isTyping]);
 
   useEffect(() => {
-    const channel = pusherClient.subscribe(`vl-${userId}`);
+    const channel = getPusherClient().subscribe(`vl-${userId}`);
 
     channel.bind('new_message', (msg: Message) => {
       setMessages((prev) => [...prev, msg]);
@@ -57,7 +57,7 @@ export default function Chat({ userId, mood, onLeave }: Props) {
     });
 
     return () => {
-      pusherClient.unsubscribe(`vl-${userId}`);
+      getPusherClient().unsubscribe(`vl-${userId}`);
     };
   }, [userId]);
 

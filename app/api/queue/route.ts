@@ -3,13 +3,14 @@ import { store, VALID_MOODS } from '@/lib/store';
 import pusher from '@/lib/pusher-server';
 
 export async function POST(req: NextRequest) {
-  const { userId, mood } = await req.json();
+  const { userId, mood, nickname } = await req.json();
 
   if (!userId || !mood || !(VALID_MOODS as readonly string[]).includes(mood)) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 
-  // Remove stale references for this user
+  if (nickname) store.userNicknames[userId] = nickname;
+
   store.waitingUsers[mood] = store.waitingUsers[mood].filter((id) => id !== userId);
 
   if (store.waitingUsers[mood].length > 0) {
@@ -20,9 +21,12 @@ export async function POST(req: NextRequest) {
     store.userRoom[userId] = roomId;
     store.userRoom[partnerId] = roomId;
 
+    const myNickname = store.userNicknames[userId] || 'Anonymous';
+    const partnerNickname = store.userNicknames[partnerId] || 'Anonymous';
+
     await Promise.all([
-      pusher.trigger(`vl-${userId}`, 'match_found', { roomId, mood }),
-      pusher.trigger(`vl-${partnerId}`, 'match_found', { roomId, mood }),
+      pusher.trigger(`vl-${userId}`, 'match_found', { roomId, mood, partnerId, partnerNickname }),
+      pusher.trigger(`vl-${partnerId}`, 'match_found', { roomId, mood, partnerId: userId, partnerNickname: myNickname }),
     ]);
 
     return NextResponse.json({ status: 'matched', roomId, mood });

@@ -18,6 +18,7 @@ interface Store {
   waitingUsers: Record<string, string[]>;
   activeRooms: Record<string, Room>;
   userRoom: Record<string, string>;
+  userNicknames: Record<string, string>;
 }
 
 const g = global as typeof global & { __vl?: Store };
@@ -27,6 +28,7 @@ if (!g.__vl) {
     waitingUsers: Object.fromEntries(VALID_MOODS.map((m) => [m, []])),
     activeRooms: {},
     userRoom: {},
+    userNicknames: {},
   };
 }
 

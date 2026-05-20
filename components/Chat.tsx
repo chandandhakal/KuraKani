@@ -21,7 +21,7 @@ interface Props {
   mood: string;
   partnerId: string;
   partnerNickname: string;
-  onLeave: () => void;
+  onLeave: () => void;w
 }
 
 export default function Chat({ userId, nickname, roomId, mood, partnerId, partnerNickname, onLeave }: Props) {
